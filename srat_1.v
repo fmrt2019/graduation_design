@@ -80,144 +80,57 @@ module	srat_1	(
 
 /********************************************写SRAT_1*********************************************************/
 		always @(posedge clk,posedge rst) begin
-		//复位
-		if (rst) begin
-			for(i = 0;i < 32;i=i+1)	begin
-				aorr[i] <= 1'b1;
+			//复位
+			if (rst) begin
+				for(i = 0;i < 32;i=i+1)	begin
+					aorr[i] <= 1'b1;
+				end
+			end
+			else begin
+				//不恢复
+				if (!recover) begin
+					//不停顿
+					if (!stall_RNR) begin
+						//提交的两条指令的目的寄存器逻辑号不相等
+						if (rd1l_c != rd2l_c) begin
+							case (rd1_enc,rd2_enc) 
+								2'b00:	begin 						//两条指令都不需要修改
+											
+									end
+								2'b01:	begin 						//第二条指令需要修改
+										aorr[rd2l_c] <= 1'b1;
+									end
+								2'b10:	begin 						//第一条指令需要修改
+										aorr[rd1l_c] <= 1'b1;
+									end
+								2'b11:	begin 						//两条指令都需要修改
+										aorr[rd1l_c] <= 1'b1;
+										aorr[rd2l_c] <= 1'b1;
+									end
+								default	begin
+													
+									end
+							endcase
+						end
+						//提交的两条指令的目的寄存器逻辑号相等
+						else begin
+							if (rd2_enc) begin 						//第一条指令必定不需要修改，第二条指令需要修改
+								aorr[rd2l_c] <= 1'b1;
+							end
+						end
+					end
+					//停顿
+					else 	begin
+									
+						end	
+					end
+				//恢复
+				else 	begin
+						for(i = 0;i < 32;i=i+1)	begin
+							aorr[i] <= 1'b1;
+						end	
+					end
 			end
 		end
-		else begin
-		//不恢复
-			if (!recover) begin
-			//不停顿
-				if (!stall_RNR) begin
-				//寄存器重命名阶段无目的寄存器,提交修改
-					if (!rd1_en & !rd2_en) begin
-					//提交的第一条指令有目的寄存器且是最新映射需要修改SRAT_1
-						if (rdl_enc) begin
-							aorr[rd1l_c] <= 1'b1;
-						end
-					//提交的第二条指令有目的寄存器且是最新映射需要修改SRAT_1
-						if (rd2_enc) begin
-							aorr[rd2l_c] <= 1'b1;
-						end
-					end
-				//寄存器重命名阶段第一条指令有目的寄存器
-					if (rd1_en & !rd2_en) begin
-						//提交的第一条指令有目的寄存器且是最新映射需要修改SRAT_1
-						if (rdl_enc) begin
-							//提交的第一条指令的目的寄存器和寄存器重命名阶段第一条指令的目的寄存器逻辑号相等
-							if (rd1l == rd1l_c) begin
-								aorr[rd1l_c] <= 1'b0;
-							end
-							//提交的第一条指令的目的寄存器和寄存器重命名阶段第一条指令的目的寄存器逻辑号不相等
-							else begin
-								aorr[rd1l_c] <= 1'b1;
-								aorr[rd1l] <= 1'b0;
-							end
-						end
-						//提交的第二条指令有目的寄存器且是最新映射需要修改SRAT_1
-						if (rd2_enc) begin
-							//提交的第二条指令的目的寄存器和寄存器重命名阶段第一条指令的目的寄存器逻辑号相等
-							if (rd1l == rd2l_c) begin
-								aorr[rd1l_c] <= 1'b0;
-							end
-							//提交的第二条指令的目的寄存器和寄存器重命名阶段第一条指令的目的寄存器逻辑号不相等
-							else begin
-								aorr[rd2l_c] <= 1'b1;
-								aorr[rd1l] <= 1'b0;
-							end
-						end
-					end
-									//寄存器重命名阶段第二条指令有目的寄存器
-									if (!rd1_en & rd2_en) begin
-										//提交的第一条指令有目的寄存器且是最新映射需要修改SRAT_1
-										if (rdl_enc) begin
-											//提交的第一条指令的目的寄存器和寄存器重命名阶段第二条指令的目的寄存器逻辑号相等
-											if (rd2l == rd1l_c) begin
-												aorr[rd1l_c] <= 1'b0;
-											end
-											//提交的第一条指令的目的寄存器和寄存器重命名阶段第一条指令的目的寄存器逻辑号不相等
-											else begin
-												aorr[rd1l_c] <= 1'b1;
-												aorr[rd2l] <= 1'b0;
-											end
-										end
-										//提交的第二条指令有目的寄存器且是最新映射需要修改SRAT_1
-										if (rd2_enc) begin
-											//提交的第二条指令的目的寄存器和寄存器重命名阶段第二条指令的目的寄存器逻辑号相等
-											if (rd2l == rd2l_c) begin
-												aorr[rd1l_c] <= 1'b0;
-											end
-											//提交的第二条指令的目的寄存器和寄存器重命名阶段第一条指令的目的寄存器逻辑号不相等
-											else begin
-												aorr[rd2l_c] <= 1'b1;
-												aorr[rd2l] <= 1'b0;
-											end
-										end
-									end
-									//寄存器重命名阶段两条指令都有目的寄存器
-									else begin
-										//提交的第一条指令有目的寄存器且是最新映射需要修改SRAT_1
-										if (rdl_enc) begin
-											//提交的第一条指令的目的寄存器和寄存器重命名阶段第一条指令的目的寄存器逻辑号相等,与第二条不等
-											if (rd1l == rd1l_c & rd2l != rd1l_c) begin
-												aorr[rd1l_c] <= 1'b0;
-												aorr[rd2l] <= 1'b0;
-											end
-											//提交的第一条指令的目的寄存器和寄存器重命名阶段第二条指令的目的寄存器逻辑号相等,与第一条不等
-											else if (rd2l == rd1l_c & rd1l != rd1l_c) begin
-												aorr[rd1l_c] <= 1'b0;
-												aorr[rd1l] <= 1'b0;
-											end
-											//提交的第一条指令的目的寄存器和寄存器重命名阶段第一条指令的目的寄存器逻辑号相等,与第二条也相等
-											else if (rd1l == rd1l_c & rd2l == rd1l_c) begin
-												aorr[rd1l_c] <= 1'b0;
-											end
-											//提交的第一条指令的目的寄存器和寄存器重命名阶段第一条指令的目的寄存器逻辑号不等,与第二条也不等
-											else begin
-												aorr[rd1l_c] <= 1'b1;
-												aorr[rd1l] <= 1'b0;
-												aorr[rd2l] <= 1'b0;
-											end
-										end
-										//提交的第二条指令有目的寄存器且是最新映射需要修改SRAT_1
-										if (rd2_enc) begin
-											//提交的第二条指令的目的寄存器和寄存器重命名阶段第一条指令的目的寄存器逻辑号相等,与第二条不等
-											if (rd1l == rd2l_c & rd2l != rd2l_c) begin
-												aorr[rd2l_c] <= 1'b0;
-												aorr[rd2l] <= 1'b0;
-											end
-											//提交的第二条指令的目的寄存器和寄存器重命名阶段第二条指令的目的寄存器逻辑号相等,与第一条不等
-											else if (rd2l == rd2l_c & rd1l != rd2l_c) begin
-												aorr[rd2l_c] <= 1'b0;
-												aorr[rd1l] <= 1'b0;
-											end
-											//提交的第二条指令的目的寄存器和寄存器重命名阶段第一条指令的目的寄存器逻辑号相等,与第二条也相等
-											else if (rd1l == rd2l_c & rd2l == rd2l_c) begin
-												aorr[rd2l_c] <= 1'b0;
-											end
-											//提交的第二条指令的目的寄存器和寄存器重命名阶段第一条指令的目的寄存器逻辑号不等,与第二条也不等
-											else begin
-												aorr[rd2l_c] <= 1'b1;
-												aorr[rd1l] <= 1'b0;
-												aorr[rd2l] <= 1'b0;
-											end
-										end
-									end
-								end
-								//停顿
-								else begin
-									
-								end	
-							end
-							//恢复
-							else begin
-								for(i = 0;i < 32;i=i+1)	begin
-									aorr[i] <= 1'b1;
-								end	
-							end
-						end
-					end
 /*****************************************************************************************************************/
 endmodule
