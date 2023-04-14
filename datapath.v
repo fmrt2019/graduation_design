@@ -5,12 +5,45 @@ Create date:2023.04.14 11:18
 Description:overall datapath.
 *******************************************************************************/
 module datapath ();
-  
-  
-  
-  
-  
-  
+/*************************************************************EX_stage***************************************/
+    //input
+	//alu
+	wire	[31:0]	aluae,alube;				//执行阶段alu的两个操作数
+	wire	[2:0]	alucontrole;				//执行阶段alu的控制信号
+	wire	[5:0]	alurde;					//执行阶段alu中的指令的目的寄存器物理号
+	wire	aluen;						//执行阶段alu中的指令是否有效
+	//sfu
+	wire	[31:0]	sfuae,sfube;				//执行阶段sfu的两个操作数
+	wire	[1:0]	sfucontrole;				//执行阶段sfu的控制信号
+	wire	[5:0]	sfurde;					//执行阶段sfu中的指令的目的寄存器物理号
+	wire	sfuen;						//执行阶段sfu中的指令是否有效
+	//bru
+	wire	[31:0]	bruae,brube;				//执行阶段bru的两个操作数
+	wire	[2:0]	brucontrole;				//执行阶段bru的控制信号
+	wire	pdce;						//执行阶段bru中分支指令的预测方向
+	wire	[31:0]	paddre;					//执行阶段bru中分支指令的预测地址
+	wire	[5:0]	brurde;					//执行阶段bru中的指令的目的寄存器物理号
+	wire	bruen;						//执行阶段bru中的指令是否有效
+	//agu
+	wire	[31:0]	aguae,agube;				//执行阶段agu的两个操作数
+	wire	[3:0]	agucontrole;				//执行阶段agu的控制信号
+	wire	[5:0]	agurde;					//执行阶段agu中的指令的目的寄存器物理号
+	wire	aguen;						//执行阶段agu中的指令是否有效
+    //out
+	//alu
+	wire	[31:0]	aluoute;				//执行阶段alu的输出
+	wire	overflowe;					//执行阶段alu是否溢出
+	//sfu
+	wire	[31:0]	sfuoute;				//执行阶段sfu的输出
+	//bru
+	wire	prighte;					//执行阶段bru中分支指令是否预测正确
+	wire	b_typee;					//执行阶段bru中分支指令的类型（1代表B类型）
+	wire	rdce;						//执行阶段bru中分支指令的真正方向
+	wire	[31:0]	raddre;					//执行阶段bru中分支指令的真正地址
+  	//agu
+	wire	[31:0]	aguoute;				//执行阶段agu的输出
+/**************************************************************************************************************/
+	
   decode_stage decode (
 		clk,reset,
 //first input
