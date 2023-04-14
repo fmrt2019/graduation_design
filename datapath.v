@@ -44,6 +44,9 @@ module datapath ();
 
 
 	)
+	
+	EX_WB_reg	ex_wb_reg(clk,rst,stall,recover,aluoute,alurde,aluen,sfuoute,sfurde,sfuen,pre_righte,b_typee,real_directione,addre,brurde,bruen,aguoute,agurde,
+				  aguen,aluoutw,alurdw,	aluenw,	sfuoutw,sfurdw,	sfuenw,	pre_rightw,b_typew,real_directionw,addrw,brurdw,bruenw,aguoutw,agurdw,aguenw);
 
 
 
