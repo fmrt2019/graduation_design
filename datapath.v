@@ -58,15 +58,27 @@ module datapath ();
 		rs1_dec_2,rs2_dec_2,rd_dec_2,ld_st_num_dec_2,imm_dec_2,next_pc_dec_2,rs_bru_pc_dec_2
 	);
 
-	flopren decode_rename_reg (330)(
+  flopren decode_rename_reg (330)(
 		clk1,reset,en,
-//information of first insrtuction
+//input	
+	//information of first insrtuction
 		{pc_dec_1,pre_direction_dec_1,
 		 rs_write_dec_1,rs1_read_dec_1,ri2_dec_1,rd_write_dec_1,st_dec_1,dectect_first_result_dec_1,rs_num_dec_1,br_type_dec_1,rs_ctrl_dec_1,
 		 rs1_dec_1,rs2_dec_1,rd_dec_1,ld_st_num_dec_1,imm_dec_1,next_pc_dec_1,rs_bru_pc_dec_1,
-		 is_split_dec_1,instr_valid_de_1},
-//information second instruction
-		{pc_rnr_2,pre_direction_rnr_2,
+		 is_split_dec_1,instr_valid_de_1,
+	//information second instruction
+		 pc_dec_2,pre_direction_dec_2,
+		 rs_write_dec_2,rs1_read_dec_2,ri2_dec_2,rd_write_dec_2,st_dec_2,dectect_first_result_dec_2,rs_num_dec_2,br_type_dec_2,rs_ctrl_dec_2,
+		 rs1_dec_2,rs2_dec_2,rd_dec_2,ld_st_num_dec_2,imm_dec_2,next_pc_dec_2,rs_bru_pc_dec_2,
+		 is_split_dec_2,instr_valid_dec_2},
+//output
+	//information of first insrtuction
+		 {pc_rnr_1,pre_direction_rnr_1,
+		 rs_write_rnr_1,rs1_read_rnr_1,ri2_rnr_1,rd_write_rnr_1,st_rnr_1,rnrtect_first_result_rnr_1,rs_num_rnr_1,br_type_rnr_1,rs_ctrl_rnr_1,
+		 rs1_rnr_1,rs2_rnr_1,rd_rnr_1,ld_st_num_rnr_1,imm_rnr_1,next_pc_rnr_1,rs_bru_pc_rnr_1,
+		 is_split_rnr_1,instr_valid_de_1,
+	//information second instruction
+		 pc_rnr_2,pre_direction_rnr_2,
 		 rs_write_rnr_2,rs1_read_rnr_2,ri2_rnr_2,rd_write_rnr_2,st_rnr_2,rnrtect_first_result_rnr_2,rs_num_rnr_2,br_type_rnr_2,rs_ctrl_rnr_2,
 		 rs1_rnr_2,rs2_rnr_2,rd_rnr_2,ld_st_num_rnr_2,imm_rnr_2,next_pc_rnr_2,rs_bru_pc_rnr_2,
 		 is_split_rnr_2,instr_valid_rnr_2}
