@@ -53,9 +53,9 @@ module	WB_stage	(
 					assign raddren = real_directionw;				//ROB中raddr属性的写使能信号
 
 					//WB/COM
-					//修改srat_1的条件——是最新映射但是和寄存器重命名阶段的有效的目的寄存器逻辑号不相等
-					assign srat_1en1 = (rd1ps == rd1p) & (~((rd1_enrn & (rd1lrn == rd1l)) | (rd2_enrn & (rd2lrn == rd1l))));
-					assign srat_1en2 = (rd2ps == rd2p) & (~((rd1_enrn & (rd1lrn == rd1l)) | (rd2_enrn & (rd2lrn == rd1l))));
+					//修改srat_1的条件——有目的寄存器且是最新映射但是和寄存器重命名阶段的有效的目的寄存器逻辑号不相等
+					assign srat_1en1 = rd_en1 & (rd1ps == rd1p) & (~((rd1_enrn & (rd1lrn == rd1l)) | (rd2_enrn & (rd2lrn == rd1l))));
+					assign srat_1en2 = rd_en2 & (rd2ps == rd2p) & (~((rd1_enrn & (rd1lrn == rd1l)) | (rd2_enrn & (rd2lrn == rd1l))));
 
 					//arf写使能
 					assign arfen1 = valid1 & rd_en1;
